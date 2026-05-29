@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Analisis HP Siswa | Dashboard Statistika Modern</title>
+  <!-- Google Fonts: Poppins & Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Font Awesome 6 (free icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ==============================================
+       style.css - GABUNGAN LENGKAP
+       THEME: Modern Dashboard Akademik & Teknologi
+       Penelitian: Analisis Lama Penggunaan HP Siswa Per Hari
+       Warna: Putih (#ffffff), Biru Modern (#3b82f6), Biru Muda (#60a5fa)
+              Abu Gelap (#1e293b), Background Lembut (#f4f7fb)
+       Font: Poppins, Montserrat
+       Efek: Hover, Shadow, Fade-in, Transisi Halus
+       Responsive: Laptop, Tablet, Mobile
+    ================================================= */
+
+    /* ----- RESET & GLOBAL ----- */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Poppins', 'Montserrat', sans-serif;
+        background-color: #f4f7fb;
+        color: #1e293b;
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    /* ----- TYPOGRAPHY ----- */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Montserrat', 'Poppins', sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+
+    /* ----- ANIMASI FADE-IN SEDERHANA ----- */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(25px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .page-section {
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    /* ----- SCROLLBAR MODERN ----- */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #3b82f6;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #2563eb;
+    }
+
+    /* ----- NAVBAR MODERN STICKY ----- */
+    .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    }
+
+    .nav-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.6rem;
+        font-weight: 700;
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(135deg, #1e293b, #3b82f6);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    .logo i {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        font-size: 1.7rem;
+    }
+
+    .dot {
+        color: #3b82f6;
+        background: none;
+        background-clip: unset;
+        -webkit-background-clip: unset;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+    }
+
+    .nav-item {
+        text-decoration: none;
+        color: #475569;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        padding: 0.5rem 0;
+    }
+
+    .nav-item:hover {
+        color: #3b82f6;
+    }
+
+    .nav-item::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0%;
+        height: 2px;
+        background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        transition: width 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .nav-item:hover::after,
+    .nav-item.active::after {
+        width: 100%;
+    }
+
+    .nav-item.active {
+        color: #3b82f6;
+    }
+
+    .menu-toggle {
+        display: none;
+        font-size: 1.6rem;
+        color: #1e293b;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .menu-toggle:hover {
+        color: #3b82f6;
+    }
+
+    /* ----- MAIN CONTENT ----- */
+    .main-content {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem 2rem 1rem;
+    }
+
+    /* ----- HERO SECTION ----- */
+    .hero {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(59, 130, 246, 0.1);
+        padding: 0.5rem 1rem;
+        border-radius: 40px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #3b82f6;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-text h1 {
+        font-size: 2.8rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+        color: #1e293b;
+    }
+
+    .highlight {
+        color: #3b82f6;
+        position: relative;
+        display: inline-block;
+    }
+
+    .highlight::after {
+        content: '';
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: rgba(59, 130, 246, 0.2);
+        border-radius: 4px;
+        z-index: -1;
+    }
+
+    .hero-desc {
+        color: #64748b;
+        margin-bottom: 1.8rem;
+        font-size: 1rem;
+    }
+
+    .student-info-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.2rem 1.5rem;
+        margin-bottom: 1.8rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        border: 1px solid #e2e8f0;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.4rem 0;
+        color: #334155;
+    }
+
+    .info-row i {
+        color: #3b82f6;
+        width: 24px;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #3b82f6;
+        color: white;
+        padding: 0.8rem 1.8rem;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        color: #3b82f6;
+        padding: 0.8rem 1.8rem;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        border: 2px solid #3b82f6;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline:hover {
+        background: #3b82f6;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Hero Image Side */
+    .hero-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .stats-blob {
+        background: linear-gradient(135deg, #ffffff, #f0f9ff);
+        border-radius: 60% 40% 50% 50% / 40% 45% 55% 60%;
+        padding: 2rem;
+        width: 280px;
+        height: 280px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+    }
+
+    .stats-blob i {
+        font-size: 3rem;
+        color: #3b82f6;
+        margin-bottom: 1rem;
+    }
+
+    .stat-circle {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .stat-circle span {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #64748b;
+    }
+
+    .stat-label {
+        color: #3b82f6;
+        font-weight: 500;
+    }
+
+    .research-note {
+        background: #eef2ff;
+        border-left: 4px solid #3b82f6;
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        margin-top: 1rem;
+        color: #1e293b;
+        font-size: 0.9rem;
+    }
+
+    /* ----- SECTION HEADER ----- */
+    .section-header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+        color: #1e293b;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-header h2 i {
+        color: #3b82f6;
+    }
+
+    .section-header p {
+        color: #64748b;
+        margin-top: 0.5rem;
+    }
+
+    /* ----- CARD MODERN (Shadow Halus) ----- */
+    .card-modern {
+        background: white;
+        border-radius: 24px;
+        padding: 1.8rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid #eef2ff;
+    }
+
+    .card-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(59, 130, 246, 0.1);
+    }
+
+    /* ----- TABLE MODERN (DENGAN HOVER EFFECT) ----- */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #1e293b, #2d3a4e);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem 1.2rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .data-table td {
+        padding: 0.9rem 1.2rem;
+        border-bottom: 1px solid #e2e8f0;
+        color: #334155;
+    }
+
+    .data-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background: #f8fafc;
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .data-insight {
+        margin-top: 1rem;
+        padding: 0.8rem;
+        background: #f1f5f9;
+        border-radius: 14px;
+        text-align: center;
+        color: #475569;
+    }
+
+    /* ----- STATS DASHBOARD (Grid) ----- */
+    .stats-dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 24px;
+        padding: 1.8rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+        border: 1px solid #eef2ff;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(59, 130, 246, 0.12);
+        border-color: #3b82f6;
+    }
+
+    .stat-card i {
+        font-size: 2.2rem;
+        color: #3b82f6;
+        margin-bottom: 0.8rem;
+    }
+
+    .stat-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: #475569;
+    }
+
+    .stat-card p {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0.5rem 0;
+    }
+
+    .stat-card small {
+        color: #94a3b8;
+        font-size: 0.75rem;
+    }
+
+    /* ----- FREQUENCY TABLE ----- */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .freq-table th, .freq-table td {
+        text-align: center;
+    }
+
+    /* ----- DIAGRAM SECTION (Grid) ----- */
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 24px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .chart-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-card canvas {
+        max-height: 260px;
+        width: 100%;
+    }
+
+    .chart-caption {
+        margin-top: 1rem;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+
+    .analysis-note {
+        background: linear-gradient(135deg, #eef2ff, #ffffff);
+        border-radius: 20px;
+        padding: 1.2rem 1.8rem;
+        border-left: 5px solid #3b82f6;
+        margin-top: 1.5rem;
+    }
+
+    /* ----- KESIMPULAN SECTION ----- */
+    .conclusion-card {
+        background: white;
+        border-radius: 32px;
+        padding: 2.5rem;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    }
+
+    .conclusion-icon {
+        font-size: 3rem;
+        color: #3b82f6;
+        margin-bottom: 1rem;
+    }
+
+    .conclusion-card h2 {
+        margin-bottom: 1.5rem;
+        color: #1e293b;
+    }
+
+    .conclusion-card p {
+        color: #475569;
+        margin-bottom: 1.5rem;
+    }
+
+    .impact-box {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        display: flex;
+        gap: 1rem;
+        text-align: left;
+        border: 1px solid #e2e8f0;
+    }
+
+    .impact-box i {
+        font-size: 2rem;
+        color: #3b82f6;
+    }
+
+    .footer-note {
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+
+    /* ----- FOOTER PROFESIONAL ----- */
+    .footer-professional {
+        background: #1e293b;
+        color: #cbd5e1;
+        margin-top: 3rem;
+        padding: 2rem 1rem;
+        text-align: center;
+    }
+
+    .footer-content {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .footer-logo {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 0.8rem;
+    }
+
+    .footer-logo i {
+        color: #3b82f6;
+    }
+
+    .footer-links {
+        margin-top: 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    /* ----- RESPONSIVE DESIGN (Mobile & Tablet) ----- */
+    @media (max-width: 968px) {
+        .hero {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            text-align: center;
+        }
+        
+        .hero-text h1 {
+            font-size: 2.2rem;
+        }
+        
+        .student-info-card {
+            text-align: left;
+        }
+        
+        .cta-buttons {
+            justify-content: center;
+        }
+        
+        .stats-blob {
+            margin: 0 auto;
+            width: 220px;
+            height: 220px;
+        }
+        
+        .section-header h2 {
+            font-size: 1.6rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            flex-direction: column;
+            gap: 0;
+            padding: 1rem 0;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .nav-links.active {
+            display: flex;
+        }
+        
+        .nav-links li {
+            text-align: center;
+            padding: 0.8rem 0;
+        }
+        
+        .menu-toggle {
+            display: block;
+        }
+        
+        .main-content {
+            padding: 1.5rem;
+        }
+        
+        .stats-dashboard {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 0.7rem 0.8rem;
+            font-size: 0.85rem;
+        }
+        
+        .conclusion-card {
+            padding: 1.5rem;
+        }
+        
+        .impact-box {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-text h1 {
+            font-size: 1.8rem;
+        }
+        
+        .btn-primary, .btn-outline {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+        }
+        
+        .stat-card p {
+            font-size: 1.8rem;
+        }
+        
+        .card-modern {
+            padding: 1.2rem;
+        }
+    }
+
+    /* ----- SMOOTH HOVER & TRANSITION GLOBAL ----- */
+    a, button, .stat-card, .chart-card, .card-modern, .btn-primary, .btn-outline {
+        transition: all 0.25s ease-in-out;
+    }
+
+    /* ----- ELEGANT SHADOW FOR CARDS ----- */
+    .card-modern, .stat-card, .chart-card, .conclusion-card {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR MODERN -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <i class="fas fa-chart-line"></i>
+        <span>EduStat<span class="dot">.</span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#beranda" class="nav-item active">Beranda</a></li>
+        <li><a href="#data" class="nav-item">Data</a></li>
+        <li><a href="#pengolahan" class="nav-item">Pengolahan</a></li>
+        <li><a href="#diagram" class="nav-item">Diagram</a></li>
+        <li><a href="#kesimpulan" class="nav-item">Kesimpulan</a></li>
+      </ul>
+      <div class="menu-toggle" id="mobileMenu">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <!-- 1. HALAMAN BERANDA (Hero Section) -->
+    <section id="beranda" class="page-section fade-in">
+      <div class="hero">
+        <div class="hero-text">
+          <span class="hero-badge"><i class="fas fa-calendar-alt"></i> Data Primer • 27 Mei 2026</span>
+          <h1>Analisis Lama Penggunaan HP <span class="highlight">Siswa Per Hari</span></h1>
+          <p class="hero-desc">Studi mendalam tentang durasi penggunaan perangkat mobile di kalangan pelajar, berdasarkan data langsung yang dikumpulkan pada tanggal 27 Mei 2026. Menyajikan insight statistik dan visualisasi modern.</p>
+          <div class="student-info-card">
+            <div class="info-row"><i class="fas fa-user-graduate"></i> <span>Nama Siswa : <strong>Ardian Maulana</strong></span></div>
+            <div class="info-row"><i class="fas fa-layer-group"></i> <span>Kelas : <strong>XII IPA 1</strong></span></div>
+            <div class="info-row"><i class="fas fa-school"></i> <span>Sekolah : <strong>SMA Teknologi Nusantara</strong></span></div>
+          </div>
+          <div class="cta-buttons">
+            <a href="#data" class="btn-primary">Jelajahi Data <i class="fas fa-arrow-right"></i></a>
+            <a href="#kesimpulan" class="btn-outline">Ringkasan Cepat</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <div class="stats-blob">
+            <i class="fas fa-chart-simple"></i>
+            <div class="floating-stats">
+              <div class="stat-circle">4,5 <span>jam</span></div>
+              <div class="stat-label">Rata-rata</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="research-note">
+        <i class="fas fa-clipboard-list"></i> &nbsp; Data diperoleh secara langsung melalui kuesioner & wawancara singkat pada <strong>27 Mei 2026</strong> dengan total 10 responden.
+      </div>
+    </section>
+
+    <!-- 2. HALAMAN DATA : Tabel modern -->
+    <section id="data" class="page-section fade-in">
+      <div class="section-header">
+        <h2><i class="fas fa-table"></i> Data Penggunaan HP Siswa</h2>
+        <p>Tabel durasi pemakaian per hari (dalam jam) berdasarkan survei tanggal 27 Mei 2026.</p>
+      </div>
+      <div class="card-modern table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr><th>No</th><th>Nama Siswa</th><th>Lama Penggunaan HP</th></tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Data diisi oleh javascript -->
+          </tbody>
+        </table>
+      </div>
+      <div class="data-insight"><i class="fas fa-chart-line"></i> Rentang pemakaian: 2 jam - 7 jam per hari</div>
+    </section>
+
+    <!-- 3. PENGOLAHAN DATA: mean, median, modus, distribusi frekuensi -->
+    <section id="pengolahan" class="page-section fade-in">
+      <div class="section-header">
+        <h2><i class="fas fa-calculator"></i> Pengolahan Data Statistika</h2>
+        <p>Ukuran pemusatan data dan distribusi frekuensi</p>
+      </div>
+      <div class="stats-dashboard">
+        <div class="stat-card"><i class="fas fa-chart-simple"></i><h3>Mean (Rata-rata)</h3><p id="meanValue">-</p><small>total jam / jumlah siswa</small></div>
+        <div class="stat-card"><i class="fas fa-sort-amount-down-alt"></i><h3>Median</h3><p id="medianValue">-</p><small>nilai tengah data terurut</small></div>
+        <div class="stat-card"><i class="fas fa-chart-pie"></i><h3>Modus</h3><p id="modusValue">-</p><small>frekuensi terbanyak</small></div>
+      </div>
+      <div class="card-modern" style="margin-top: 2rem;">
+        <h3><i class="fas fa-chart-bar"></i> Distribusi Frekuensi (Interval 1 jam)</h3>
+        <div class="table-responsive">
+          <table class="data-table freq-table">
+            <thead><tr><th>Interval (Jam)</th><th>Frekuensi</th><th>Persentase</th></tr></thead>
+            <tbody id="freqTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. HALAMAN DIAGRAM: Batang, Lingkaran, Histogram -->
+    <section id="diagram" class="page-section fade-in">
+      <div class="section-header">
+        <h2><i class="fas fa-chart-column"></i> Visualisasi Data Interaktif</h2>
+        <p>Diagram batang, lingkaran & histogram durasi penggunaan HP</p>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card"><canvas id="barChart" width="400" height="300"></canvas><p class="chart-caption">Gambar 1. Durasi per siswa (batang)</p></div>
+        <div class="chart-card"><canvas id="pieChart" width="400" height="300"></canvas><p class="chart-caption">Gambar 2. Proporsi rentang pemakaian</p></div>
+        <div class="chart-card"><canvas id="histogramChart" width="400" height="300"></canvas><p class="chart-caption">Gambar 3. Histogram frekuensi (interval 1 jam)</p></div>
+      </div>
+      <div class="analysis-note">
+        <i class="fas fa-lightbulb"></i> <strong>Analisis singkat :</strong> Mayoritas siswa berada di rentang 4–6 jam per hari, menunjukkan ketergantungan cukup tinggi pada perangkat mobile untuk pembelajaran dan hiburan.
+      </div>
+    </section>
+
+    <!-- 5. HALAMAN KESIMPULAN -->
+    <section id="kesimpulan" class="page-section fade-in">
+      <div class="conclusion-card">
+        <div class="conclusion-icon"><i class="fas fa-file-alt"></i></div>
+        <h2>Kesimpulan Penelitian</h2>
+        <p>Berdasarkan data yang diperoleh langsung pada <strong>27 Mei 2026</strong>, dapat disimpulkan bahwa <strong>sebagian besar siswa menggunakan HP sekitar 4–6 jam per hari</strong>. Rata-rata penggunaan harian mencapai 4,5 jam dengan distribusi yang cenderung mengelompok di sekitar angka 5 jam. Hal ini mengindikasikan bahwa ponsel pintar telah menjadi bagian integral dari keseharian siswa, baik untuk aktivitas akademik maupun hiburan.</p>
+        <div class="impact-box">
+          <i class="fas fa-brain"></i>
+          <div><strong>Dampak terhadap aktivitas siswa:</strong> Penggunaan HP yang intensif dalam durasi 4-6 jam dapat berdampak positif pada akses informasi dan kolaborasi digital, namun juga berpotensi menimbulkan kelelahan mata, gangguan fokus belajar, serta pengurangan interaksi sosial langsung. Diperlukan manajemen waktu digital yang bijak.</div>
+        </div>
+        <p class="footer-note">Penelitian dilaksanakan melalui pendataan langsung di lingkungan SMA Teknologi Nusantara. Data autentik dan representatif.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-professional">
+    <div class="footer-content">
+      <div class="footer-logo"><i class="fas fa-chart-line"></i> EduStat Analytics</div>
+      <p>© 2026 • Analisis Lama Penggunaan HP Siswa Per Hari • Data primer 27 Mei 2026</p>
+      <div class="footer-links">
+        <span>Nama: Ardian Maulana</span> • 
+        <span>Kelas: XII IPA 1</span> • 
+        <span>Sekolah: SMA Teknologi Nusantara</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ========================
+    // SCRIPT.JS - Data, Statistik, Chart.js, Interaksi Mobile
+    // ========================
+    
+    // Data siswa (Nama & Jam)
+    const students = [
+      { name: "Andi", hours: 2 },
+      { name: "Budi", hours: 5 },
+      { name: "Citra", hours: 4 },
+      { name: "Dimas", hours: 6 },
+      { name: "Eka", hours: 3 },
+      { name: "Farhan", hours: 7 },
+      { name: "Gina", hours: 5 },
+      { name: "Hana", hours: 4 },
+      { name: "Indra", hours: 6 },
+      { name: "Joko", hours: 3 }
+    ];
+
+    // 1. Mengisi Tabel Data
+    const tableBody = document.getElementById('table-body');
+    students.forEach((student, idx) => {
+      const row = `<tr><td>${idx+1}</td><td>${student.name}</td><td>${student.hours} Jam</td></tr>`;
+      tableBody.innerHTML += row;
+    });
+
+    // 2. Menghitung Mean, Median, Modus
+    const hoursList = students.map(s => s.hours).sort((a,b) => a-b);
+    const sum = hoursList.reduce((a,b) => a+b, 0);
+    const mean = (sum / hoursList.length).toFixed(1);
+    
+    let median;
+    const mid = Math.floor(hoursList.length/2);
+    if(hoursList.length % 2 === 0) median = (hoursList[mid-1] + hoursList[mid])/2;
+    else median = hoursList[mid];
+    median = median.toFixed(1);
+    
+    // Modus
+    const freqMap = {};
+    hoursList.forEach(h => freqMap[h] = (freqMap[h] || 0) + 1);
+    let maxFreq = 0, modusValue = [];
+    for(let [key,val] of Object.entries(freqMap)){
+      if(val > maxFreq){
+        maxFreq = val;
+        modusValue = [key];
+      } else if(val === maxFreq) modusValue.push(key);
+    }
+    const modusStr = modusValue.join(', ') + ' jam';
+    
+    document.getElementById('meanValue').innerText = mean + ' jam';
+    document.getElementById('medianValue').innerText = median + ' jam';
+    document.getElementById('modusValue').innerText = modusStr;
+    
+    // 3. Distribusi Frekuensi (Interval 1-2,2-3,3-4,4-5,5-6,6-7) 
+    const intervals = [
+      { label: "1 - 2 jam", min: 1, max: 2 },
+      { label: "2 - 3 jam", min: 2, max: 3 },
+      { label: "3 - 4 jam", min: 3, max: 4 },
+      { label: "4 - 5 jam", min: 4, max: 5 },
+      { label: "5 - 6 jam", min: 5, max: 6 },
+      { label: "6 - 7 jam", min: 6, max: 7 }
+    ];
+    
+    const freqTableBody = document.getElementById('freqTableBody');
+    intervals.forEach(interval => {
+      let count = hoursList.filter(h => h >= interval.min && h < interval.max).length;
+      if(interval.label === "6 - 7 jam") count = hoursList.filter(h => h >= 6 && h <= 7).length;
+      const percent = ((count / hoursList.length) * 100).toFixed(1);
+      const row = `<tr><td>${interval.label}</td><td>${count}</td><td>${percent}%</td></tr>`;
+      freqTableBody.innerHTML += row;
+    });
+    
+    // 4. CHART.JS - Diagram Batang, Lingkaran, Histogram
+    // Bar Chart (durasi per siswa)
+    const ctxBar = document.getElementById('barChart').getContext('2d');
+    new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: students.map(s => s.name),
+        datasets: [{
+          label: 'Lama Penggunaan HP (jam)',
+          data: students.map(s => s.hours),
+          backgroundColor: '#3b82f6',
+          borderRadius: 8,
+          barPercentage: 0.7
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { position: 'top' } }
+      }
+    });
+    
+    // Pie Chart (proporsi rentang umum: <=3, 4-5, >=6)
+    const low = hoursList.filter(h => h <= 3).length;
+    const medium = hoursList.filter(h => h === 4 || h === 5).length;
+    const high = hoursList.filter(h => h >= 6).length;
+    const ctxPie = document.getElementById('pieChart').getContext('2d');
+    new Chart(ctxPie, {
+      type: 'pie',
+      data: {
+        labels: ['Ringan (≤3 jam)', 'Sedang (4-5 jam)', 'Tinggi (≥6 jam)'],
+        datasets: [{
+          data: [low, medium, high],
+          backgroundColor: ['#60a5fa', '#3b82f6', '#1e3a8a'],
+          borderWidth: 0
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+    
+    // Histogram (berdasarkan interval frekuensi)
+    const intervalLabels = intervals.map(i => i.label);
+    const intervalCounts = intervals.map(interval => {
+      if(interval.label === "6 - 7 jam") return hoursList.filter(h => h >= 6 && h <= 7).length;
+      return hoursList.filter(h => h >= interval.min && h < interval.max).length;
+    });
+    const ctxHist = document.getElementById('histogramChart').getContext('2d');
+    new Chart(ctxHist, {
+      type: 'bar',
+      data: {
+        labels: intervalLabels,
+        datasets: [{
+          label: 'Frekuensi',
+          data: intervalCounts,
+          backgroundColor: '#60a5fa',
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'Jumlah Siswa' } } }
+      }
+    });
+    
+    // 5. Mobile Menu Toggle + Active Nav Link
+    const mobileBtn = document.getElementById('mobileMenu');
+    const navLinks = document.getElementById('navLinks');
+    mobileBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+    
+    // Update active menu on scroll & close mobile after click
+    const sections = document.querySelectorAll('.page-section');
+    const navItems = document.querySelectorAll('.nav-item');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if(pageYOffset >= sectionTop) current = section.getAttribute('id');
+      });
+      navItems.forEach(link => {
+        link.classList.remove('active');
+        if(link.getAttribute('href') === `#${current}`) link.classList.add('active');
+      });
+    });
+    
+    navItems.forEach(link => {
+      link.addEventListener('click', (e) => {
+        navLinks.classList.remove('active');
+      });
+    });
+  </script>
+</body>
+</html>
